@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Briefcase, Lightbulb } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,7 +16,13 @@ interface FormData {
   description: string;
 }
 
+interface FormErrors {
+  email?: string;
+  password?: string;
+}
+
 export function GetStarted() {
+  const navigate = useNavigate();
   const [userType, setUserType] = useState<UserType>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -35,6 +42,34 @@ export function GetStarted() {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const form = e.target as HTMLFormElement;
+      const formData = new FormData(form);
+      
+      // Add form-name field for Netlify forms
+      formData.append('form-name', 'contact');
+      
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData as any).toString(),
+      });
+
+      // Show success message and redirect
+      alert('Thank you for your submission!');
+      navigate('/');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting the form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -92,6 +127,7 @@ export function GetStarted() {
                 method="POST"
                 data-netlify="true"
                 data-netlify-honeypot="bot-field"
+                onSubmit={handleSubmit}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}

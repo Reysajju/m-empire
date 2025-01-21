@@ -45,12 +45,16 @@
   </head>
   <body>
     <div id="root"></div>
-    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+    <!-- Add action attribute to forms -->
+    <form name="contact" netlify netlify-honeypot="bot-field" hidden action="/success">
       <input type="text" name="name" />
       <input type="email" name="email" />
       <select name="investmentRange"></select>
       <select name="industry"></select>
       <textarea name="description"></textarea>
+    </form>
+    <form name="newsletter" netlify netlify-honeypot="bot-field" hidden action="/success">
+      <input type="email" name="email" />
     </form>
     <script type="module" src="/src/main.tsx"></script>
   </body>

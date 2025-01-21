@@ -3,6 +3,29 @@ import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
 
 export function Footer() {
+  const handleNewsletterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    
+    try {
+      // Add form-name field for Netlify forms
+      formData.append('form-name', 'newsletter');
+      
+      await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData as any).toString(),
+      });
+
+      alert('Thank you for subscribing!');
+      form.reset();
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error subscribing. Please try again.');
+    }
+  };
+
   return (
     <footer className="bg-[#0A2463] text-white" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">Footer</h2>
@@ -66,7 +89,12 @@ export function Footer() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
             <p className="text-gray-300 mb-4">Stay updated with our latest news and updates.</p>
-            <form className="space-y-4" data-netlify="true" name="newsletter">
+            <form 
+              className="space-y-4" 
+              data-netlify="true" 
+              name="newsletter"
+              onSubmit={handleNewsletterSubmit}
+            >
               <input type="hidden" name="form-name" value="newsletter" />
               <div>
                 <label htmlFor="email-address" className="sr-only">Email address</label>
